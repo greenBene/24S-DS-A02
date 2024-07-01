@@ -45,23 +45,25 @@ public class Fireworks {
             while (true) {
                 Message m = receive();
                 if (m.query("name").equals("FIREWORK")) {
-                    currentState = STATE.ACTIVE;
-
-                    System.out.println(NodeName() + " was woken up by firework message from " + m.query("sender") + ".");
-
-                    if(Math.random() < this.forward_likelihood) {
-                        System.out.println(NodeName() + " sends firework message to random subset");
-                        sendFireworkToRandomSubset();
-                    } else {
-                        System.out.println(NodeName() + " does not send firework message to random subset");
-                    }
-                    this.forward_likelihood *= LIKELIHOOD_DECREASE;
-                    System.out.println(NodeName() + ": " + this.forward_likelihood);
-                    currentState = STATE.PASSIVE;
+                    receivedFireworks(m);
                 }
 
-
             }
+        }
+
+        private void receivedFireworks(Message m) {
+            currentState = STATE.ACTIVE;
+            System.out.println(NodeName() + " was woken up by firework message from " + m.query("sender") + ".");
+
+            if(Math.random() < this.forward_likelihood) {
+                System.out.println(NodeName() + " sends firework message to random subset.");
+                sendFireworkToRandomSubset();
+            } else {
+                System.out.println(NodeName() + " does not send firework message to random subset.");
+            }
+            this.forward_likelihood *= LIKELIHOOD_DECREASE;
+            System.out.println(NodeName() + " new likelihood is now " + this.forward_likelihood + "%.");
+            currentState = STATE.PASSIVE;
         }
 
         private void sendFireworkToRandomSubset() {
